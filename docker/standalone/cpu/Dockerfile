@@ -1,5 +1,8 @@
-FROM ubuntu:14.04
+FROM ubuntu:18.04
 MAINTAINER caffe-maint@googlegroups.com
+
+ENV TC=ASIA/SINGAPORE
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
@@ -17,11 +20,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libprotobuf-dev \
         libsnappy-dev \
         protobuf-compiler \
-        python-dev \
-        python-numpy \
-        python-pip \
-        python-scipy && \
+        python3-dev \
+        python3-numpy \
+        python3-pip \
+        python3-scipy \
+	curl \
+	nano && \
     rm -rf /var/lib/apt/lists/*
+
 
 ENV CAFFE_ROOT=/opt/caffe
 WORKDIR $CAFFE_ROOT
@@ -29,8 +35,8 @@ WORKDIR $CAFFE_ROOT
 # FIXME: clone a specific git tag and use ARG instead of ENV once DockerHub supports this.
 ENV CLONE_TAG=master
 
-RUN git clone -b ${CLONE_TAG} --depth 1 https://github.com/BVLC/caffe.git . && \
-    for req in $(cat python/requirements.txt) pydot; do pip install $req; done && \
+RUN git clone -b ssd --depth 1 https://github.com/Levon-Beam/caffe.git .
+RUN for req in $(cat python/requirements.txt) pydot; do pip3 install $req; done && \
     mkdir build && cd build && \
     cmake -DCPU_ONLY=1 .. && \
     make -j"$(nproc)"
