@@ -36,6 +36,7 @@ WORKDIR $CAFFE_ROOT
 ENV CLONE_TAG=master
 
 RUN git clone -b ssd --depth 1 https://github.com/Levon-Beam/caffe.git .
+RUN pip3 install wheel
 RUN for req in $(cat python/requirements.txt) pydot; do pip3 install $req; done && \
     mkdir build && cd build && \
     cmake -DCPU_ONLY=1 .. && \
