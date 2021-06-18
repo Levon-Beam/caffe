@@ -36,12 +36,16 @@ WORKDIR $CAFFE_ROOT
 # FIXME: clone a specific git tag and use ARG instead of ENV once DockerHub supports this.
 ENV CLONE_TAG=master
 
-RUN git clone -b ssd --depth 1 https://github.com/Levon-Beam/caffe.git .
+RUN git clone --depth 1 -b ssd https://github.com/Levon-Beam/caffe.git .
 RUN pip3 install wheel
-RUN for req in $(cat python/requirements.txt) pydot; do pip3 install $req; done && \
-    mkdir build && cd build && \
-    cmake -DCPU_ONLY=1 .. && \
-    make all
+RUN for req in $(cat python/requirements.txt) pydot; do pip3 install $req; done
+RUN    make all -j3
+RUN    make py -j3
+RUN    make test -j3
+#    mkdir build && cd build && \
+#    cmake -DCPU_ONLY=1 .. 
+
+RUN export PYTHONPATH="$CAFFE_ROOT/python":$PYTHONPATH
 
 ENV PYCAFFE_ROOT $CAFFE_ROOT/python
 ENV PYTHONPATH $PYCAFFE_ROOT:$PYTHONPATH
