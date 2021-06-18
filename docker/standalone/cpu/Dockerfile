@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libopencv-dev \
         libprotobuf-dev \
         libsnappy-dev \
+        libopenblas-dev \
         protobuf-compiler \
         python3-dev \
         python3-numpy \
@@ -40,7 +41,7 @@ RUN pip3 install wheel
 RUN for req in $(cat python/requirements.txt) pydot; do pip3 install $req; done && \
     mkdir build && cd build && \
     cmake -DCPU_ONLY=1 .. && \
-    make -j"$(nproc)"
+    make all
 
 ENV PYCAFFE_ROOT $CAFFE_ROOT/python
 ENV PYTHONPATH $PYCAFFE_ROOT:$PYTHONPATH
