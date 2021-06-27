@@ -39,6 +39,7 @@ ENV CLONE_TAG=master
 RUN git clone --depth 1 -b ssd https://github.com/Levon-Beam/caffe.git .
 RUN pip3 install wheel
 RUN for req in $(cat python/requirements.txt) pydot; do pip3 install $req; done
+RUN    mv Makefile.config_cpu Makefile.config
 RUN    make all -j3
 RUN    make py -j3
 RUN    make test -j3
